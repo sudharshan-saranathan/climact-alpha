@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RCC>
+  <qresource>
+    <!-- Theme / styles -->
+    <file>assets/theme/dark.qss</file>
+    <file>assets/theme/light.qss</file>
+
+    <!-- Icons -->
+
+    <!-- Images -->
+    <file>assets/icons/empty.png</file>
+    <file>assets/icons/logo.png</file>
+    <file>assets/icons/logo-padded.png</file>
+
+  </qresource>
+</RCC>
