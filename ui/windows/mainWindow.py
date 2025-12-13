@@ -1,5 +1,5 @@
 # Encoding: utf-8
-# Module name: main_ui
+# Module name: mainWindow
 # Description: Main UI window for the application
 
 
@@ -8,7 +8,7 @@ from PySide6 import QtGui, QtCore, QtWidgets
 
 
 # Main UI window class
-class MainUi(QtWidgets.QMainWindow):
+class MainWindow(QtWidgets.QMainWindow):
     """
     Main UI window for the Climact application.
     """

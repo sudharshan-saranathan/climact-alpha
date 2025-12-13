@@ -14,7 +14,7 @@ from PySide6 import QtGui, QtCore, QtWidgets
 # Imports (local)
 import opts
 import resources
-from ui.windows.main_ui import MainUi
+from ui.windows.mainWindow import MainWindow
 
 
 # Configure logging
@@ -45,7 +45,7 @@ class Climact(QtWidgets.QApplication):
         self._set_style()
 
         # Instantiate the main window
-        self.main_ui = MainUi()
+        self.main_ui = MainWindow()
         self.main_ui.showMaximized()
 
     # Parse command-line arguments

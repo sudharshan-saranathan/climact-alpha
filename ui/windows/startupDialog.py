@@ -41,10 +41,10 @@ class StartupWindow(QtWidgets.QDialog):
         self.setWindowFlag(QtCore.Qt.WindowType.FramelessWindowHint)
 
         # Set up the UI
-        self._setup_ui()
+        self._init_ui()
 
     # Set up the UI
-    def _setup_ui(self):
+    def _init_ui(self):
 
         container = QtWidgets.QWidget(self)
         vb_layout = VLayout(container)
