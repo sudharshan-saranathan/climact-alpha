@@ -4,6 +4,7 @@
 
 
 # Import - standard
+from __future__ import annotations
 import types
 import dataclasses
 
@@ -32,8 +33,17 @@ class Viewer(QtWidgets.QGraphicsView):
         zoom_min = kwargs.pop("zoom_min", ViewerOpts.zoom_min)
         zoom_exp = kwargs.pop("exp", ViewerOpts.zoom_exp)
 
+        super().__init__(
+            alignment=QtCore.Qt.AlignmentFlag.AlignCenter,
+            renderHints=kwargs.get(
+                "renderHints", QtGui.QPainter.RenderHint.Antialiasing
+            ),
+            backgroundBrush=kwargs.get(
+                "backgroundBrush", QtGui.QBrush(QtCore.Qt.GlobalColor.white)
+            ),
+        )
+
         # Base-class initialization:
-        super().__init__(**kwargs)
         super().setScene(canvas)
         super().setDragMode(QtWidgets.QGraphicsView.DragMode.NoDrag)
         super().setViewportUpdateMode(
@@ -67,10 +77,6 @@ class Viewer(QtWidgets.QGraphicsView):
         self._openGL_viewport = QtOpenGLWidgets.QOpenGLWidget(self)
         self._openGL_viewport.setFormat(self._format)
         self.setViewport(self._openGL_viewport)
-
-        # Handle item focus signals:
-        bus = Bus.instance()
-        bus.sig_item_focused.connect(self._on_item_focused)
 
     # Reimplementation of QGraphicsView.keyPressEvent():
     def keyPressEvent(self, event, /):

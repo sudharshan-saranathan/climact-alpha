@@ -2,8 +2,17 @@
 # Module name: tabbedWidget
 # Description: Tabbed widget component for the Climact application
 
+# Imports (standard)
+from __future__ import annotations
+from typing import Dict, Any
+
+
 # Imports (third-party)
 from PySide6 import QtGui, QtCore, QtWidgets
+
+
+# Imports (local)
+from core.events import EventBus
 
 
 # Tabbed widget class
@@ -25,18 +34,74 @@ class TabbedWidget(QtWidgets.QTabWidget):
             parent,
             movable=kwargs.get("movable", True),
             tabsClosable=kwargs.get("tabsClosable", True),
+            tabBarAutoHide=kwargs.get("tabBarAutoHide", False),
+            tabPosition=kwargs.get(
+                "tabPosition", QtWidgets.QTabWidget.TabPosition.North
+            ),
         )
 
+        instance = EventBus.instance()  # Get the singleton EventBus instance
+        instance.instruction.connect(self._handle_instructions)
+
     # Override getitem method
-    def __getitem__(self, index):
+    def __getitem__(self, index) -> QtWidgets.QWidget:
         """
         Get the widget at the specified tab index.
         """
         return self.widget(index)
 
     # Close tab method
-    def _close_tab(self, index):
+    def _close_tab(self, index) -> None:
         """
         Close the tab at the specified index.
         """
         self.removeTab(index)
+
+    # Instructions handler
+    def _handle_instructions(self, message: dict) -> None:
+        """
+        Handle incoming instructions from the EventBus.
+
+        :param message: A dictionary containing the command and payload.
+        """
+        command: str = message.get("command", "")
+        payload: Dict[str, Any] = message.get("payload", {})
+
+        if command == "open_in_tab":
+
+            self.new_tab(
+                widget=payload.get("widget", None),
+                label=payload.get("label", None),
+                icon=payload.get("icon", None),
+            )
+
+    # New tab method
+    def new_tab(
+        self,
+        widget: QtWidgets.QWidget | None = None,
+        label: str | None = None,
+        icon: QtGui.QIcon | None = None,
+    ):
+        """
+        Show the provided widget in a new tab if it doesn't already exist.
+        """
+
+        count = self.count()
+        index = self.indexOf(widget)  # Returns -1 if the widget is not found.
+
+        if index >= 0:
+            self.setCurrentIndex(index)  # Switch to the existing tab.
+            return  # Exit the method.
+
+        widget = widget or QtWidgets.QGraphicsView(
+            self,
+            sceneRect=QtCore.QRectF(0, 0, 5000, 5000),
+            renderHints=QtGui.QPainter.RenderHint.Antialiasing,
+            backgroundBrush=QtGui.QBrush(QtGui.QColor(255, 255, 255)),
+        )  # Use a QGraphicsView as the default widget if no widget is provided.
+
+        self.addTab(
+            widget,  # Set the provided widget or the default widget.
+            icon or QtGui.QIcon(),  # The default icon is empty.
+            label or f"Tab {count + 1}",  # Use an updated tab count as the default.
+        )  # Display the widget in a new tab
