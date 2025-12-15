@@ -14,6 +14,7 @@ from qtawesome import icon as qta_icon
 # Imports (local)
 from ui.components.tabbedWidget import TabbedWidget
 from core.events import EventBus
+from ui.sidebar.sidebar import SideBar
 
 
 # Main UI window class
@@ -121,15 +122,5 @@ class MainWindow(QtWidgets.QMainWindow):
         """
         Create and configure the main sidebar.
         """
-        sidebar = QtWidgets.QDockWidget("Sidebar", self)
-        sidebar.setFeatures(
-            QtWidgets.QDockWidget.DockWidgetFeature.NoDockWidgetFeatures
-        )
-
-        list_widget = QtWidgets.QListWidget()
-        list_widget.addItems(["Item 1", "Item 2", "Item 3"])
-        sidebar.setWidget(list_widget)
-
-        self.addDockWidget(QtCore.Qt.DockWidgetArea.LeftDockWidgetArea, sidebar)
-
+        sidebar = SideBar(self)
         return sidebar

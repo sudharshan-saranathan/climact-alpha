@@ -537,7 +537,7 @@ QComboBox::drop-down {
 QComboBox::down-arrow {
     height                          : 16px;
     width                           : 16px;
-    image                           : url(assets/icons/caret-down.png);
+    image                           : url(:/assets/icons/pack-png/caret-down.png);
     margin-right                    : 4px;
 }
 
