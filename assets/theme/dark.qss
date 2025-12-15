@@ -1,12 +1,6 @@
 * {
-    font-family                 : 'Consolas';
-    font-size                   :  10pt;
-}
-
-QMainWindow {
-    background                  : #232a2e;
-    border-radius               : 4px;
-    border                      : none;
+    font-family                 : 'Menlo';
+    font-size                   :  12pt;
 }
 
 QMainWindow::separator {
@@ -15,20 +9,26 @@ QMainWindow::separator {
     width                       : 4px;
 }
 
-QFrame#startup-window {
+QFrame#StartupWindow {
     background                  : #232a2e;
     padding                     : 0px;
     border-radius               : 12px;
     border                      : 1px solid darkgray;
 }
 
+/*
 QWidget {
     background: qlineargradient(
         x1: 0, y1: 0,
         x2: 1, y2: 0,
-        stop: 0 #393e41,            /* dark gray */
-        stop: 1 lightslategray      /* lightslategray */
+        stop: 0 #393e41,
+        stop: 1 lightslategray
     );
+}
+*/
+
+QWidget {
+    background                  : transparent;
 }
 
 QRadioButton {
@@ -167,7 +167,7 @@ QMenuBar {          /* Default appearance of all widgets */
         stop: 1 lightslategray   /* light gray */
     );
 
-    padding                     : 4px;
+    padding-top                 : 2px;
     border-top-left-radius      : 8px;
     border-top-right-radius     : 8px;
 }
@@ -175,7 +175,7 @@ QMenuBar {          /* Default appearance of all widgets */
 QMenuBar::item {   /* Menu bar item style */
     background                  : transparent;
     padding                     : 4px 8px 4px 8px;
-    margin                      : 2px 8px 2px 0px;
+    margin                      : 2px 8px 2px 2px;
     border                      : none;
 }
 
@@ -300,11 +300,13 @@ QToolBar::separator {
     border-radius               : 2px;
 }
 
-QToolBar#traffic-lights {
+QToolBar#TrafficLights {
+    margin-top                  : 4px;
     border-radius               : 4px;
+    background                  : #232a2e;
 }
 
-QToolBar#traffic-lights QToolButton:hover {
+QToolBar#TrafficLights QToolButton:hover {
     background                  : transparent;
 }
 
@@ -313,7 +315,7 @@ QToolBar#traffic-lights QToolButton:hover {
 -- Dialog customization
 */
 
-QDialog#startup-dialog {
+QDialog#StartupDialog {
     background                  : transparent;
     border-radius               : 4px;
     border                      : 2px solid gray;

@@ -41,7 +41,7 @@ class ComboBox(QtWidgets.QComboBox):
 
         # Set custom view with fixed item height:
         view = QtWidgets.QListView(self)
-        view.setItemDelegate(FixedHeightDelegate(24, view))
+        view.setItemDelegate(FixedHeightDelegate(20, view))
         view.setSpacing(2)
 
         # Custom style:
@@ -49,7 +49,7 @@ class ComboBox(QtWidgets.QComboBox):
         self.setObjectName("ComboBox")
         self.setStyleSheet(
             "QComboBox {"
-            "margin: 0px 0px 0px 0px;"
+            "margin: 3px 1px 1px 1px;"
             "border: 0px solid gray; "
             "border-radius: 4px;"
             "}"

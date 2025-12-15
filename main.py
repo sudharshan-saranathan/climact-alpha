@@ -97,12 +97,12 @@ class Climact(QtWidgets.QApplication):
             except Exception as exception:
                 logger.error(f"Error applying stylesheet: {exception}")
 
-            file.close()  # Close file after reading
+            file.close()  # Close the file after reading
 
         else:
             logger.error(f"Failed to load stylesheet: {file.fileName()}")
 
-    # Set window icon
+    # Set the window icon
     def _set_icon(self):
 
         icon = QtGui.QIcon(":/assets/icons/logo-padded.png")
