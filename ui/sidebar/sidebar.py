@@ -14,6 +14,7 @@ from PySide6 import QtGui, QtCore, QtWidgets
 
 # Imports (local)
 from core.events import EventBus
+from ui.components.combobox import ComboBox
 
 
 # Sidebar class
@@ -35,9 +36,12 @@ class SideBar(QtWidgets.QDockWidget):
             ),
         )
 
+        print(QtCore.QFile.exists(":/assets/icons/pack-png/caret-down.png"))
+
         # Add a combobox as the title bar widget
-        combobox = QtWidgets.QComboBox()
-        combobox.addItems(["Settings", "Schematic", "Assistant"])
+        combobox = ComboBox(
+            self, editable=False, items=["Option 1", "Option 2", "Option 3"]
+        )
         self.setTitleBarWidget(combobox)
 
         # Set minimum width
