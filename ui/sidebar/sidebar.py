@@ -42,3 +42,13 @@ class SideBar(QtWidgets.QDockWidget):
         )
         self.setTitleBarWidget(combobox)
         self.setMinimumWidth(400)
+
+    # Reimplement paintEvent to customize appearance
+    def paintEvent(self, event: QtGui.QPaintEvent) -> None:
+
+        painter = QtGui.QPainter(self)
+        painter.setPen(QtCore.Qt.PenStyle.NoPen)
+        painter.setBrush(QtGui.QColor(0x232A2E))
+        painter.drawRoundedRect(self.rect(), 4, 4)
+
+        super().paintEvent(event)

@@ -1,6 +1,6 @@
 * {
-    font-family                 : 'Menlo';
-    font-size                   :  12pt;
+    font-family                 : 'Consolas';
+    font-size                   :  10pt;
 }
 
 QMainWindow::separator {
@@ -172,10 +172,14 @@ QMenuBar {          /* Default appearance of all widgets */
     border-top-right-radius     : 8px;
 }
 
+QMenuBar::corner {
+    background                  : black;
+}
+
 QMenuBar::item {   /* Menu bar item style */
     background                  : transparent;
     padding                     : 4px 8px 4px 8px;
-    margin                      : 2px 8px 2px 2px;
+    margin                      : 4px 8px 0px 2px;
     border                      : none;
 }
 
@@ -250,7 +254,7 @@ QTabWidget QTabBar::tab {                                  /* Individual tab sty
 
 QTabBar::tab:hover, QTabBar::tab:selected {                         /* Style for the selected tab */
     background                  : transparent;
-    border-bottom               : 4px solid #ffcb00;
+    border-bottom               : 2px solid #ffcb00;
     border-bottom-left-radius   : 0px;
     border-bottom-right-radius  : 0px;
 }
@@ -301,9 +305,8 @@ QToolBar::separator {
 }
 
 QToolBar#TrafficLights {
-    margin-top                  : 4px;
     border-radius               : 4px;
-    background                  : #232a2e;
+    background                  : transparent;
 }
 
 QToolBar#TrafficLights QToolButton:hover {
