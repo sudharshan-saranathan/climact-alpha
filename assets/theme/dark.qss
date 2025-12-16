@@ -61,9 +61,10 @@ QGroupBox::title {
     QLabel, QFrame, QGraphicsView, and QStatusBar.
 */
 
-QStackedWidget {    /* Default appearance of stacked widgets */
-    background                  : transparent;
+QStackedWidget#DockStack {    /* Default appearance of stacked widgets */
+    background                  : #232a2e;
     border                      : none;
+    margin                      : 2px 0px 4px 2px;
     border-radius               : 4px;
 }
 
@@ -79,8 +80,8 @@ QFrame {
 }
 
 QGraphicsView {                 /* Default appearance of graphics view widgets */
-    background                  : white;
     border-radius               : 4px;
+    background                  : #232a2e;
     margin                      : 0px 4px 0px 0px;
 }
 
@@ -232,13 +233,13 @@ QTabWidget {                                     /* Tab widget style */
 }
 
 QTabWidget::pane {                              /* Tab pane style */
-    background                  : transparent;
+    background                  : white;
     border-radius               : 4px;
+    margin                      : 0px 4px 4px 0px;
 }
 
 QTabWidget QTabBar {                                      /* Tab bar style */
     background                  : transparent;
-    padding                     : 4px 2px 4px 2px;
     left                        : 4px;
 }
 
@@ -250,7 +251,7 @@ QTabWidget QTabBar::tab {                                  /* Individual tab sty
     border-radius               : 4px;
     border                      : none;
     padding                     : 2px 4px 2px 4px;
-    margin                      : 4px 4px 0px 8px;
+    margin                      : 4px 4px 0px 4px;
 }
 
 QTabBar::tab:hover, QTabBar::tab:selected {                         /* Style for the selected tab */
@@ -391,9 +392,8 @@ QMenu::right-arrow {                                    /* Submenu arrow style *
 
 QTreeWidget {
     background                  : #40474d;
-    color                       : color;
+    color                       : black;
     border                      : none;
-    outline                     : 0px;
     border-radius               : 4px;
 }
 
@@ -461,7 +461,6 @@ QTreeWidget::branch:open:has-children {
 QTableWidget {
     background                  : #40474d;
     border-radius               : 4px;
-    outline                     : 0px;
     margin                      : 0px;
 }
 
@@ -503,12 +502,12 @@ QTableWidget::item:selected {
 */
 
 QScrollBar:vertical {                             /* Vertical scrollbar style */
-    background                  : white;
+    background                  : transparent;
     width                       : 16px;
 }
 
 QScrollBar:horizontal {                             /* Vertical scrollbar style */
-    background                  : white;
+    background                  : transparent;
     height                      : 16px;
 }
 

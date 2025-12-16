@@ -25,11 +25,8 @@ class SideBar(QtWidgets.QDockWidget):
     def __init__(self, parent=None, **kwargs):
         super().__init__(
             parent,
-            floating=kwargs.get("floating", False),
-            features=kwargs.get(
-                "features",
-                QtWidgets.QDockWidget.DockWidgetFeature.NoDockWidgetFeatures,
-            ),
+            floating=False,
+            features=QtWidgets.QDockWidget.DockWidgetFeature.NoDockWidgetFeatures,
             dockLocation=kwargs.get(
                 "dockLocation", QtCore.Qt.DockWidgetArea.LeftDockWidgetArea
             ),
@@ -37,20 +34,24 @@ class SideBar(QtWidgets.QDockWidget):
 
         # Add a combobox as the title bar widget
         combobox = ComboBox(
-            self, editable=False, items=["Option 1", "Option 2", "Option 3"]
+            self,
+            editable=False,
+            items=["Settings", "Assistant", "Schematic", "Geospatial Data"],
         )
 
+        # Initialize a stack widget
+        self._stack = self._init_stack()
+
         self.setTitleBarWidget(combobox)
+        self.setWidget(self._stack)
 
-    # Reimplement paintEvent to customize appearance
-    def paintEvent(self, event: QtGui.QPaintEvent) -> None:
+    # Helper method to initialize the stack widget
+    def _init_stack(self) -> QtWidgets.QStackedWidget:
 
-        painter = QtGui.QPainter(self)
-        painter.save()
+        stack = QtWidgets.QStackedWidget(self)
+        stack.setObjectName("DockStack")
+        stack.addWidget(
+            QtWidgets.QLabel("Settings", alignment=QtCore.Qt.AlignmentFlag.AlignCenter)
+        )
 
-        painter.setPen(QtCore.Qt.PenStyle.NoPen)
-        painter.setBrush(QtGui.QBrush(QtGui.QColor(0x232A2E)))
-        # painter.drawRoundedRect(self.rect().adjusted(0, 2, 0, -4), 4, 4)
-
-        painter.restore()
-        super().paintEvent(event)
+        return stack

@@ -105,7 +105,7 @@ class MainWindow(QtWidgets.QMainWindow):
             {
                 "command": "open_in_tab",
                 "payload": {
-                    "widget": GraphicsView(self),
+                    "widget": GraphicsView(None),
                     "label": "Home",
                     "icon": QtGui.QIcon(),
                 },

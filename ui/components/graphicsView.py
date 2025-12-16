@@ -41,7 +41,7 @@ class GraphicsView(QtWidgets.QGraphicsView):
                 "renderHints", QtGui.QPainter.RenderHint.Antialiasing
             ),
             backgroundBrush=kwargs.get(
-                "backgroundBrush", QtGui.QBrush(QtCore.Qt.GlobalColor.white)
+                "backgroundBrush", QtGui.QBrush(QtGui.QColor(0x232A2E))
             ),
         )
 
