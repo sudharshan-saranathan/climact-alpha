@@ -41,38 +41,14 @@ class ComboBox(QtWidgets.QComboBox):
 
         # Set custom view with fixed item height:
         view = QtWidgets.QListView(self)
-        view.setItemDelegate(FixedHeightDelegate(20, view))
         view.setSpacing(2)
+        view.setItemDelegate(FixedHeightDelegate(24, view))
+        view.setStyleSheet(
+            "QListView {background-color: #232a2e; " "border-radius: 4px;}"
+        )
 
         # Custom style:
         self.setView(view)
-        self.setObjectName("ComboBox")
-        self.setStyleSheet(
-            "QComboBox {"
-            "margin: 3px 1px 1px 1px;"
-            "border: 0px solid gray; "
-            "border-radius: 4px;"
-            "}"
-            "QComboBox::down-arrow {"
-            "height: 16px;"
-            "width: 16px;"
-            "image: url(:/assets/icons/pack-png/caret-down.png);"
-            "margin-right: 4px;"
-            "}"
-            "QComboBox QAbstractView {"
-            "margin: 4px 0px 4px 0px;"
-            "border: 0px solid gray; "
-            "border-radius: 4px;"
-            "}"
-            "QComboBox QAbstractView::item {"
-            "width:  80px;"
-            "padding: 4px;"
-            "}"
-            "QComboBox QAbstractView::item:selected {"
-            "background-color: #3874F2;"
-            "color: white;"
-            "}"
-        )
 
         # Add items, if available:
         for item in kwargs.get("items", []):

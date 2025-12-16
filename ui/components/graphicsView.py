@@ -11,6 +11,8 @@ import dataclasses
 # Import(s) - third party
 from PySide6 import QtGui, QtCore, QtWidgets, QtOpenGLWidgets
 
+from ui.graph.graphicsScene import GraphicsScene
+
 
 # Dataclass
 @dataclasses.dataclass
@@ -21,13 +23,13 @@ class ViewerOpts:
 
 
 # Class Viewer: A QGraphicsView-based schematic viewer
-class Viewer(QtWidgets.QGraphicsView):
+class GraphicsView(QtWidgets.QGraphicsView):
 
     # Signal(s):
     sig_zoom_changed = QtCore.Signal(float)
 
     # Constructor:
-    def __init__(self, canvas: QtWidgets.QGraphicsScene, **kwargs):
+    def __init__(self, canvas: QtWidgets.QGraphicsScene | None = None, **kwargs):
 
         zoom_max = kwargs.pop("zoom_max", ViewerOpts.zoom_max)
         zoom_min = kwargs.pop("zoom_min", ViewerOpts.zoom_min)
@@ -44,7 +46,7 @@ class Viewer(QtWidgets.QGraphicsView):
         )
 
         # Base-class initialization:
-        super().setScene(canvas)
+        super().setScene(canvas or GraphicsScene(QtCore.QRectF(0, 0, 10000, 10000)))
         super().setDragMode(QtWidgets.QGraphicsView.DragMode.NoDrag)
         super().setViewportUpdateMode(
             QtWidgets.QGraphicsView.ViewportUpdateMode.FullViewportUpdate

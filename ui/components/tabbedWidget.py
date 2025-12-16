@@ -75,6 +75,22 @@ class TabbedWidget(QtWidgets.QTabWidget):
                 icon=payload.get("icon", None),
             )
 
+    # Reimplement paint event
+    def paintEvent(self, event: QtGui.QPaintEvent) -> None:
+        """
+        Reimplement the paint event to customize tab appearance.
+        """
+
+        painter = QtGui.QPainter(self)
+        painter.save()
+
+        painter.setPen(QtCore.Qt.PenStyle.NoPen)
+        painter.setBrush(QtGui.QBrush(QtGui.QColor(0x232A2E)))
+        painter.drawRoundedRect(self.rect().adjusted(0, 2, -4, -4), 4, 4)
+
+        painter.restore()
+        super().paintEvent(event)
+
     # New tab method
     def new_tab(
         self,

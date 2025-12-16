@@ -13,7 +13,6 @@ from PySide6 import QtGui, QtCore, QtWidgets
 
 
 # Imports (local)
-from core.events import EventBus
 from ui.components.combobox import ComboBox
 
 
@@ -40,15 +39,18 @@ class SideBar(QtWidgets.QDockWidget):
         combobox = ComboBox(
             self, editable=False, items=["Option 1", "Option 2", "Option 3"]
         )
+
         self.setTitleBarWidget(combobox)
-        self.setMinimumWidth(400)
 
     # Reimplement paintEvent to customize appearance
     def paintEvent(self, event: QtGui.QPaintEvent) -> None:
 
         painter = QtGui.QPainter(self)
-        painter.setPen(QtCore.Qt.PenStyle.NoPen)
-        painter.setBrush(QtGui.QColor(0x232A2E))
-        painter.drawRoundedRect(self.rect(), 4, 4)
+        painter.save()
 
+        painter.setPen(QtCore.Qt.PenStyle.NoPen)
+        painter.setBrush(QtGui.QBrush(QtGui.QColor(0x232A2E)))
+        # painter.drawRoundedRect(self.rect().adjusted(0, 2, 0, -4), 4, 4)
+
+        painter.restore()
         super().paintEvent(event)

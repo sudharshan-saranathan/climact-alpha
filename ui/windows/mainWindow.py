@@ -14,20 +14,33 @@ from qtawesome import icon as qta_icon
 # Imports (local)
 from ui.components.tabbedWidget import TabbedWidget
 from core.events import EventBus
+from ui.components.toolbar import ToolBar
 from ui.sidebar.sidebar import SideBar
 
 
 # Main UI window class
 class MainWindow(QtWidgets.QMainWindow):
     """
-    Main UI window for the Climact application.
+    Refactored MainWindow with DI for EventBus, smaller helpers, explicit slots,
+    and a public method to open the initial tab (avoids emitting during __init__).
+    Note: import your compiled resources module before applying app stylesheet elsewhere.
     """
 
-    def __init__(self):
+    def __init__(self, event_bus: EventBus | None = None):
         super().__init__()
+
+        self._logger = logging.getLogger(__name__)
+        self._bus = event_bus or EventBus.instance()
+
+        self._toolbar: QtWidgets.QToolBar | None = None
+        self._sidebar: QtWidgets.QDockWidget | None = None
+        self._tabview: TabbedWidget | None = None
+        self._menubar: QtWidgets.QMenuBar | None = None
 
         self._init_attr()  # Set behavior and attributes
         self._init_ui()  # Initialize interface components
+
+        self.resize(1440, 900)  # Set default window size
 
     # Behavior and attributes
     def _init_attr(self):
@@ -59,21 +72,26 @@ class MainWindow(QtWidgets.QMainWindow):
         """
         Create and configure the main toolbar.
         """
-        toolbar = QtWidgets.QToolBar(
-            "Toolbar",
+        toolbar = ToolBar(
             self,
+            align="left",
+            style="QToolBar QToolButton { margin: 1px 2px 16px 2px;}",
             movable=False,
             floatable=False,
-            iconSize=QtCore.QSize(26, 26),
+            iconSize=QtCore.QSize(25, 25),
             orientation=QtCore.Qt.Orientation.Vertical,
+            actions=[
+                (
+                    qta_icon("ph.layout-fill", color="#efefef"),
+                    "Dock",
+                    self.toggle_sidebar,
+                ),
+                (qta_icon("mdi.folder", color="#ffcb00"), "Open", None),
+                (qta_icon("mdi.content-save", color="lightblue"), "Save", None),
+                (qta_icon("mdi.language-python", color="#bd6b73"), "Run", None),
+                (qta_icon("mdi.chart-box", color="#899878"), "Run", None),
+            ],
         )
-
-        toolbar.addAction(qta_icon("ph.layout-fill", color="#efefef"), "Dock", self.toggle_sidebar)
-        toolbar.addAction(qta_icon("mdi.folder", color="#ffcb00"), "Open")
-        toolbar.addAction(qta_icon("mdi.content-save", color="lightblue"), "Save")
-        toolbar.addAction(qta_icon("mdi.language-python", color="#bd6b73"), "Run")
-        toolbar.addAction(qta_icon("mdi.chart-box", color="#899878"), "Run")
-        toolbar.setStyleSheet("QToolBar QToolButton { margin: 2px 2px 4px 2px; }")
 
         return toolbar
 
@@ -94,9 +112,12 @@ class MainWindow(QtWidgets.QMainWindow):
             {
                 "command": "open_in_tab",
                 "payload": {
-                    "widget": QtWidgets.QLabel("Welcome to Climact!"),
+                    "widget": QtWidgets.QLabel(
+                        "Welcome to Climact!",
+                        alignment=QtCore.Qt.AlignmentFlag.AlignCenter,
+                    ),
                     "label": "Home",
-                    "icon": qta_icon("mdi.home", color="green"),
+                    "icon": QtGui.QIcon(),
                 },
             }
         )
@@ -117,18 +138,30 @@ class MainWindow(QtWidgets.QMainWindow):
         help_menu = menubar.addMenu("Help")
 
         # Traffic light indicators
-        expander = QtWidgets.QFrame(self)
-        expander.setSizePolicy(
-            QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Preferred
+        traffic_lights = ToolBar(
+            self,
+            align="right",
+            iconSize=QtCore.QSize(18, 18),
+            actions=[
+                (
+                    qta_icon("mdi.plus", color="gray", color_active="white"),
+                    "Maximize",
+                    self.toggle_maximize,
+                ),
+                (
+                    qta_icon("mdi.minus", color="gray", color_active="white"),
+                    "Minimize",
+                    self.showMinimized,
+                ),
+                (
+                    qta_icon("mdi.close", color="gray", color_active="white"),
+                    "Close",
+                    self.close,
+                ),
+            ],
         )
-        traffic_lights_widget = QtWidgets.QToolBar(self, iconSize=QtCore.QSize(16, 16))
-        traffic_lights_widget.addWidget(expander)
-        traffic_lights_widget.addAction(qta_icon("fa5s.circle", color="green"), "Maximize", self.showMaximized)
-        traffic_lights_widget.addAction(qta_icon("fa5s.circle", color="yellow"), "Minimize", self.showMinimized)
-        traffic_lights_widget.addAction(qta_icon("fa5s.circle", color="red"), "Close", self.close)
-        traffic_lights_widget.setObjectName("TrafficLights")
-
-        menubar.setCornerWidget(traffic_lights_widget, QtCore.Qt.Corner.TopRightCorner)
+        traffic_lights.setObjectName("TrafficLights")
+        menubar.setCornerWidget(traffic_lights, QtCore.Qt.Corner.TopRightCorner)
         return menubar
 
     # Helper method to create a sidebar:
@@ -137,11 +170,13 @@ class MainWindow(QtWidgets.QMainWindow):
         Create and configure the main sidebar.
         """
         sidebar = SideBar(self)
+        sidebar.setFixedWidth(360)
         sidebar.hide()
 
         return sidebar
 
-    # Helper method to toggle sidebar visibility:
+    # Slot to toggle sidebar visibility
+    @QtCore.Slot()
     def toggle_sidebar(self):
         """
         Toggle the visibility of the sidebar.
@@ -150,23 +185,28 @@ class MainWindow(QtWidgets.QMainWindow):
         if sidebar:
             sidebar.setVisible(not sidebar.isVisible())
 
+    @QtCore.Slot()
+    def toggle_maximize(self):
+        """
+        Toggle between maximized and normal window states.
+        """
+        if self.isMaximized():
+            self.showNormal()
+        else:
+            self.showMaximized()
+
     # Reimplement paint event for custom rendering:
     def paintEvent(self, event):
         """
         Custom paint event for the main window.
         """
-
-        self.rect()
-
         painter = QtGui.QPainter(self)
+        painter.save()
+
         painter.setRenderHint(QtGui.QPainter.RenderHint.Antialiasing)
-
         painter.setPen(QtCore.Qt.PenStyle.NoPen)
-        painter.setBrush(QtGui.QBrush(QtGui.QColor(0x393e41)))
-        painter.drawRoundedRect(
-            self.rect(),
-            8,
-            8,
-        )
+        painter.setBrush(QtGui.QBrush(QtGui.QColor(0x393E41)))
+        painter.drawRoundedRect(self.rect(), 8, 8)
 
+        painter.restore()
         super().paintEvent(event)

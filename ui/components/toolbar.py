@@ -34,14 +34,18 @@ class ToolBar(QtWidgets.QToolBar):
             QtWidgets.QSizePolicy.Policy.Expanding,
         )
 
-        # Add spacer based on alignment:
+        # Add spacer based on alignment
         if align == "right":
             self.addWidget(space)
 
-        # Add actions:
+        # Add actions
         for icon, text, slot in kwargs.get("actions", []):
             self.addAction(icon, text, slot)
 
-        #   Add spacer based on alignment:
+        # Add spacer based on alignment
         if align == "left":
             self.addWidget(space)
+
+        # Set style
+        if kwargs.get("style"):
+            self.setStyleSheet(kwargs.get("style"))
