@@ -12,8 +12,9 @@ from PySide6 import QtGui, QtCore, QtWidgets
 from qtawesome import icon as qta_icon
 
 # Imports (local)
-from ui.components.tabbedWidget import TabbedWidget
 from core.events import EventBus
+from ui.components.graphicsView import GraphicsView
+from ui.components.tabbedWidget import TabbedWidget
 from ui.components.toolbar import ToolBar
 from ui.sidebar.sidebar import SideBar
 
@@ -32,15 +33,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self._logger = logging.getLogger(__name__)
         self._bus = event_bus or EventBus.instance()
 
-        self._toolbar: QtWidgets.QToolBar | None = None
-        self._sidebar: QtWidgets.QDockWidget | None = None
-        self._tabview: TabbedWidget | None = None
-        self._menubar: QtWidgets.QMenuBar | None = None
-
         self._init_attr()  # Set behavior and attributes
         self._init_ui()  # Initialize interface components
-
-        self.resize(1440, 900)  # Set default window size
 
     # Behavior and attributes
     def _init_attr(self):
@@ -56,7 +50,6 @@ class MainWindow(QtWidgets.QMainWindow):
         """
         Initialize UI components.
         """
-
         self._toolbar = self._create_toolbar()
         self._sidebar = self._create_sidebar()
         self._tabview = self._create_tab_widget()
@@ -112,10 +105,7 @@ class MainWindow(QtWidgets.QMainWindow):
             {
                 "command": "open_in_tab",
                 "payload": {
-                    "widget": QtWidgets.QLabel(
-                        "Welcome to Climact!",
-                        alignment=QtCore.Qt.AlignmentFlag.AlignCenter,
-                    ),
+                    "widget": GraphicsView(self),
                     "label": "Home",
                     "icon": QtGui.QIcon(),
                 },
