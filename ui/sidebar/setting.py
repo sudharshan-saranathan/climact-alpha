@@ -20,8 +20,6 @@ class GlobalSettings(QtWidgets.QWidget):
 
     # Default constructor:
     def __init__(self, parent: QtWidgets.QWidget | None = None):
-
-        # Base-class initialization:
         super().__init__(parent)
 
         # Initialize buttons (apply and reset buttons):
