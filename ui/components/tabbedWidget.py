@@ -13,6 +13,7 @@ from PySide6 import QtGui, QtCore, QtWidgets
 
 # Imports (local)
 from core.events import EventBus
+from ui.components.graphicsView import GraphicsView, GraphicsScene
 
 
 # Tabbed widget class
@@ -109,11 +110,13 @@ class TabbedWidget(QtWidgets.QTabWidget):
             self.setCurrentIndex(index)  # Switch to the existing tab.
             return  # Exit the method.
 
-        widget = widget or QtWidgets.QGraphicsView(
-            self,
+        canvas = GraphicsScene(QtCore.QRectF(0, 0, 100, 100))
+        widget = widget or GraphicsView(
+            canvas,
             sceneRect=QtCore.QRectF(0, 0, 5000, 5000),
             renderHints=QtGui.QPainter.RenderHint.Antialiasing,
-            backgroundBrush=QtGui.QBrush(QtGui.QColor(255, 255, 255)),
+            viewportUpdateMode=QtWidgets.QGraphicsView.ViewportUpdateMode.MinimalViewportUpdate,
+            backgroundBrush=QtGui.QBrush(QtGui.QColor(0x232A2E)),
         )  # Use a QGraphicsView as the default widget if no widget is provided.
 
         self.addTab(
