@@ -10,8 +10,8 @@ import types
 from PySide6 import QtGui, QtCore, QtWidgets
 
 from ui.components import *
-from schematic.anchor import AnchorItem
-from schematic.handle import HandleItem, HandleRole
+from ui.graph.anchor import AnchorItem
+from ui.graph.handle import HandleItem, HandleRole
 
 # Default vertex options:
 VERTEX_OPTS = {

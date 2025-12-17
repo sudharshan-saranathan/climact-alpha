@@ -42,8 +42,15 @@ class GraphicsScene(QtWidgets.QGraphicsScene):
         menu.addAction(qta_icon("mdi.content-paste", color="blue"), "Paste")
         return menu
 
+    # Reimplement QGraphicsScene.contextMenuEvent():
     def contextMenuEvent(self, event: QtWidgets.QGraphicsSceneContextMenuEvent) -> None:
 
         if hasattr(self, "_menu"):
             self._mpos = event.scenePos()
-            self._menu.show(event.screenPos())
+            self._menu.exec(event.screenPos())
+
+    # Public methods
+    def create_item(self, item_class: str):
+
+        # Import globals
+        _class = globals()[item_class]
