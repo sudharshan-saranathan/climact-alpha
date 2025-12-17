@@ -11,6 +11,7 @@ import dataclasses
 from PySide6 import QtGui, QtCore, QtWidgets
 
 
+# GraphicsScene class
 class GraphicsScene(QtWidgets.QGraphicsScene):
     """
     A QGraphicsScene-based canvas for the Climact application.

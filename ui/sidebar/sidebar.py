@@ -14,6 +14,7 @@ from PySide6 import QtGui, QtCore, QtWidgets
 
 # Imports (local)
 from ui.components.combobox import ComboBox
+from ui.sidebar.setting import GlobalSettings
 
 
 # Sidebar class
@@ -49,9 +50,6 @@ class SideBar(QtWidgets.QDockWidget):
     def _init_stack(self) -> QtWidgets.QStackedWidget:
 
         stack = QtWidgets.QStackedWidget(self)
-        stack.setObjectName("DockStack")
-        stack.addWidget(
-            QtWidgets.QLabel("Settings", alignment=QtCore.Qt.AlignmentFlag.AlignCenter)
-        )
+        stack.addWidget(GlobalSettings(self))
 
         return stack

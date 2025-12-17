@@ -11,6 +11,8 @@
     <file>assets/icons/empty.png</file>
     <file>assets/icons/logo.png</file>
     <file>assets/icons/logo-padded.png</file>
+    <file>assets/icons/pack-svg/caret-up.svg</file>
+    <file>assets/icons/pack-svg/caret-down.svg</file>
     <file>assets/icons/pack-png/caret-down.png</file>
 
   </qresource>

@@ -28,7 +28,6 @@ class GlobalSettings(QtWidgets.QWidget):
         # Initialize child-widgets:
         name_edit = QtWidgets.QLineEdit(self)
         text_edit = QtWidgets.QTextEdit()
-        combo_box = QtWidgets.QComboBox()
         spin_start = QtWidgets.QSpinBox()
         spin_final = QtWidgets.QSpinBox()
         flow_hub = QtWidgets.QFrame()
@@ -43,7 +42,6 @@ class GlobalSettings(QtWidgets.QWidget):
 
         # Insert widgets:
         self._form.addRow("Project:", name_edit)
-        self._form.addRow("Version:", combo_box)
         self._form.addRow("Description:", text_edit)
         self._form.addRow("Start Epoch:", spin_start)
         self._form.addRow("Final Epoch:", spin_final)

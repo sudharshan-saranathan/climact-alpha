@@ -61,13 +61,6 @@ QGroupBox::title {
     QLabel, QFrame, QGraphicsView, and QStatusBar.
 */
 
-QStackedWidget#DockStack {    /* Default appearance of stacked widgets */
-    background                  : #232a2e;
-    border                      : none;
-    margin                      : 2px 0px 4px 2px;
-    border-radius               : 4px;
-}
-
 QLabel {
     background                  : transparent;
     color                       : #efefef;
@@ -137,7 +130,7 @@ QSpinBox {
 }
 
 QSpinBox::up-button {
-    image                       : url(assets/icons/caret-up.svg);
+    image                       : url(:/assets/icons/pack-svg/caret-up.svg);
     height                      : 12px;
     subcontrol-origin           : border;
     subcontrol-position         : top right;
@@ -145,7 +138,7 @@ QSpinBox::up-button {
 }
 
 QSpinBox::down-button {
-    image                       : url(assets/icons/caret-down.svg);
+    image                       : url(:/assets/icons/pack-svg/caret-down.svg);
     height                      : 12px;
     subcontrol-origin           : border;
     subcontrol-position         : bottom right;
