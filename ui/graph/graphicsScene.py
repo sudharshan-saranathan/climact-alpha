@@ -9,6 +9,8 @@ import dataclasses
 
 # Imports (third party)
 from PySide6 import QtGui, QtCore, QtWidgets
+from PySide6.QtCore import QPointF
+from qtawesome import icon as qta_icon
 
 
 # GraphicsScene class
@@ -24,3 +26,23 @@ class GraphicsScene(QtWidgets.QGraphicsScene):
                 "backgroundBrush", QtGui.QBrush(QtCore.Qt.GlobalColor.white)
             ),
         )
+
+        self._mpos = QtCore.QPointF()
+        self._init_menu()
+
+    # Helper method to initialize the context menu
+    @staticmethod
+    def _init_menu():
+
+        menu = QtWidgets.QMenu()
+        subm = menu.addMenu("Add")
+        menu.addSeparator()
+
+        menu.addAction(qta_icon("mdi.content-copy", color="#efefef"), "Copy")
+        menu.addAction(qta_icon("mdi.content-paste", color="blue"), "Paste")
+        return menu
+
+    def contextMenuEvent(self, event: QtWidgets.QGraphicsSceneContextMenuEvent) -> None:
+
+        if hasattr(self, "_menu"):
+            self._menu.show(event.screenPos())
