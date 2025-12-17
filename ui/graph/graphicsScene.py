@@ -28,7 +28,7 @@ class GraphicsScene(QtWidgets.QGraphicsScene):
         )
 
         self._mpos = QtCore.QPointF()
-        self._init_menu()
+        self._menu = self._init_menu()
 
     # Helper method to initialize the context menu
     @staticmethod
@@ -45,4 +45,5 @@ class GraphicsScene(QtWidgets.QGraphicsScene):
     def contextMenuEvent(self, event: QtWidgets.QGraphicsSceneContextMenuEvent) -> None:
 
         if hasattr(self, "_menu"):
+            self._mpos = event.scenePos()
             self._menu.show(event.screenPos())

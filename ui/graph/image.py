@@ -2,12 +2,7 @@
 # Module Name: image
 # Description: Animatable SVG-icon class for non-textual labeling.
 
-
-# Imports (standard)
-from __future__ import annotations
-
-
-# Imports (third party)
+# Import(s):
 from PySide6 import QtSvg, QtCore, QtWidgets, QtGui
 
 # Default options:
@@ -22,19 +17,14 @@ class Image(QtWidgets.QGraphicsObject):
 
     # Default constructor:
     def __init__(
-        self,
-        buffer: str | QtGui.QIcon,
-        parent: QtWidgets.QGraphicsObject | None = None,
-        **kwargs,
+        self, buffer: str | QtGui.QIcon, parent: QtWidgets.QGraphicsObject | None = None, **kwargs
     ):
         super().__init__(parent)
 
         # Set properties:
         self.setProperty("size", kwargs.get("size", ImageOpts["size"]))
         self.setProperty("anim", kwargs.get("anim", False))
-        self.setProperty(
-            "buffer", buffer if isinstance(buffer, str) else self.from_icon(buffer)
-        )
+        self.setProperty("buffer", buffer if isinstance(buffer, str) else self.from_icon(buffer))
 
         # Render the buffer:
         self.renderer = QtSvg.QSvgRenderer(self.property("buffer"), self)
@@ -42,9 +32,7 @@ class Image(QtWidgets.QGraphicsObject):
         # If the `movable` is set:
         if kwargs.get("movable", False):
             self.setFlag(QtWidgets.QGraphicsItem.GraphicsItemFlag.ItemIsMovable)
-            self.setFlag(
-                QtWidgets.QGraphicsItem.GraphicsItemFlag.ItemSendsGeometryChanges
-            )
+            self.setFlag(QtWidgets.QGraphicsItem.GraphicsItemFlag.ItemSendsGeometryChanges)
 
     # Reimplementation of QGraphicsObject.boundingRect():
     def boundingRect(self) -> QtCore.QRectF:
