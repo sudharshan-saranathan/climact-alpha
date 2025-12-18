@@ -12,6 +12,7 @@ import weakref
 from PySide6 import QtGui, QtCore, QtWidgets
 
 # Import (local):
+from ui.graph.image import Image
 import opts
 
 EdgeOpts = {
@@ -27,7 +28,7 @@ EdgeOpts = {
 
 
 # Class Bundle:
-class VectorItem(QtWidgets.QGraphicsObject):
+class EdgeItem(QtWidgets.QGraphicsObject):
     """
     A generic connector that connects two QGraphicsObject items in a QGraphicsScene.
     It supports bezier and angular curves, with customizable appearance and interactive behavior.
@@ -54,13 +55,13 @@ class VectorItem(QtWidgets.QGraphicsObject):
         self._init_anim()  # Initialize animation "after" attributes.
 
         # Arrow to indicate the flow direction:
-        self._arrow = custom.Image(
-            opts.CLIMACT_CONFIG["root"] + "/assets/icons/pack-svg/arrow.svg",
+        self._arrow = Image(
+            ":/assets/icons/pack-svg/arrow.svg",
             parent=self,
         )
 
         # Import:
-        from schematic import HandleItem
+        from ui.graph.handle import HandleItem
 
         # The input and output objects must be of the type `Handle` (see schematic/handle.py):
         if isinstance(kwargs.get("origin", None), HandleItem) and isinstance(
@@ -109,14 +110,6 @@ class VectorItem(QtWidgets.QGraphicsObject):
         # Connect signals to monitor endpoint shifts:
         origin.sig_handle_moved.connect(self.on_endpoint_shifted)
         target.sig_handle_moved.connect(self.on_endpoint_shifted)
-
-    # Register this object with the event bus:
-    def _register_with_bus(self) -> None:
-
-        from schematic.bus_object import Bus
-
-        bus = Bus.instance()
-        self.sig_item_focused.connect(bus.sig_item_focused)
 
     # Reimplement QGraphicsObject.boundingRect():
     def boundingRect(self) -> QtCore.QRectF:
@@ -173,12 +166,7 @@ class VectorItem(QtWidgets.QGraphicsObject):
 
     # Reimplement mouseDoubleClickEvent(...):
     def mouseDoubleClickEvent(self, event) -> None:
-
-        from gui.config import VectorConfig
-
         self.sig_item_focused.emit(self)
-        cfg_window = VectorConfig(self)
-        cfg_window.exec()
 
         event.accept()
         super().mouseDoubleClickEvent(event)

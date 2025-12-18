@@ -2,23 +2,23 @@
 # Module name: handle
 # Description: Connection end points for vertices.
 
-# Import(s):
-import util
+# Import (standard)
+from __future__ import annotations
 import enum
-
-# PySide6:
 from typing import Any
 
+# Import (third party)
 from PySide6 import QtCore
 from PySide6 import QtGui
 from PySide6 import QtWidgets
 
-from stream.basic import Stream
-from stream.basic import BasicFlows
-from stream.combo import ComboFlows
+
+# Import (local)
+from qtawesome import icon as qta_icon
+
 
 # Default options for HandleItem:
-HANDLE_OPTS = {
+HandleOpts = {
     "frame": QtCore.QRectF(-1.5, -1.5, 3, 3),
     "color": 0xB4F7D2,
 }
@@ -39,7 +39,7 @@ class HandleConnectivity(enum.Enum):
 # Class Handle:
 class HandleItem(QtWidgets.QGraphicsObject):
 
-    sig_stream_changed = QtCore.Signal(type(Stream))
+    # sig_stream_changed = QtCore.Signal(type(Stream))
     sig_handle_clicked = QtCore.Signal(QtWidgets.QGraphicsObject)
     sig_handle_moved = QtCore.Signal(QtWidgets.QGraphicsObject)
 
@@ -65,9 +65,9 @@ class HandleItem(QtWidgets.QGraphicsObject):
             "role": role,
             "xpos": position.x(),
             "name": kwargs.get("name", "Resource"),
-            "flow": kwargs.get("flow", BasicFlows["ItemFlow"]),
-            "frame": QtCore.QRectF(kwargs.get("frame", HANDLE_OPTS["frame"])),
-            "color": QtGui.QColor(kwargs.get("color", HANDLE_OPTS["color"])),
+            # "flow": kwargs.get("flow", BasicFlows["ItemFlow"]),
+            "frame": QtCore.QRectF(kwargs.get("frame", HandleOpts["frame"])),
+            "color": QtGui.QColor(kwargs.get("color", HandleOpts["color"])),
             "icon-size": kwargs.get("icon-size", 12),
         }
 
@@ -76,7 +76,6 @@ class HandleItem(QtWidgets.QGraphicsObject):
         self.setProperty("ymax", kwargs.get("ymax", float("inf")))
 
         # Sub-component initialization:
-        self._icon = self._set_icon(self.attr["flow"])
         self._anim = self._init_anim()
         self._menu = self._init_menu()
 
@@ -85,9 +84,9 @@ class HandleItem(QtWidgets.QGraphicsObject):
         self.connector = None
 
         # Import:
-        from schematic.vector import VectorItem
+        from ui.graph.edge import EdgeItem
 
-        self._connections: dict[VectorItem, HandleItem] = {}
+        self._connections: dict[EdgeItem, HandleItem] = {}
 
         # If provided, connect to the callback:
         if kwargs.get("callback", None):
@@ -96,7 +95,9 @@ class HandleItem(QtWidgets.QGraphicsObject):
         # Set flags and attribute(s):
         self.setPos(position)
         self.setAcceptHoverEvents(True)
-        self.setFlag(QtWidgets.QGraphicsObject.GraphicsItemFlag.ItemSendsScenePositionChanges)
+        self.setFlag(
+            QtWidgets.QGraphicsObject.GraphicsItemFlag.ItemSendsScenePositionChanges
+        )
 
     # _Reimplement __getitem__(...):
     def __getitem__(self, key: str):
@@ -131,13 +132,13 @@ class HandleItem(QtWidgets.QGraphicsObject):
             "Stream"
         )  # For easy access, the submenu has to be a class member.
 
-        pencil = self._menu.addAction(util.qta_icon("mdi.pencil"), "Configure")
+        pencil = self._menu.addAction(qta_icon("mdi.pencil"), "Configure")
         unpair = self._menu.addAction(
-            util.qta_icon("mdi.link-off", color="#ffcb00"), "Unpair", self.free
+            qta_icon("mdi.link-off", color="#ffcb00"), "Unpair", self.free
         )
         self._menu.addSeparator()
 
-        delete = self._menu.addAction(util.qta_icon("mdi.delete", color="red"), "Delete")
+        delete = self._menu.addAction(qta_icon("mdi.delete", color="red"), "Delete")
 
         # Display icons:
         pencil.setIconVisibleInMenu(True)
@@ -156,17 +157,6 @@ class HandleItem(QtWidgets.QGraphicsObject):
 
         # Return the animation:
         return animation
-
-    # Method to set a vectorized icon:
-    def _set_icon(self, cls: type[Stream]) -> QtWidgets.QGraphicsItem:
-
-        size = self.attr["icon-size"]
-        icon = util.qta_icon_item(cls.ICON, color=cls.COLOR, size=size, parent=self)
-        icon.setParentItem(self)
-        icon.setPos(
-            QtCore.QPointF(-3 - size if self.attr["role"] == HandleRole.OUT else 3, -size / 2)
-        )
-        return icon
 
     # Reimplement boundingRect(...):
     def boundingRect(self, /):
@@ -199,10 +189,16 @@ class HandleItem(QtWidgets.QGraphicsObject):
     # Reimplementation of QtWidgets.QGraphicsObject.itemChange():
     def itemChange(self, change, value, /):
 
-        if change == QtWidgets.QGraphicsObject.GraphicsItemChange.ItemScenePositionHasChanged:
+        if (
+            change
+            == QtWidgets.QGraphicsObject.GraphicsItemChange.ItemScenePositionHasChanged
+        ):
             self.sig_handle_moved.emit(self)
 
-        if change == QtWidgets.QGraphicsObject.GraphicsItemChange.ItemSceneHasChanged and value:
+        if (
+            change == QtWidgets.QGraphicsObject.GraphicsItemChange.ItemSceneHasChanged
+            and value
+        ):
             if hasattr(value, "begin_transient"):
                 self.sig_handle_clicked.connect(value.begin_transient)
 
@@ -218,20 +214,6 @@ class HandleItem(QtWidgets.QGraphicsObject):
         # mouseReleaseEvent(...) which would normally reset this flag. Instead, we have to do it here.
         self.setFlag(QtWidgets.QGraphicsObject.GraphicsItemFlag.ItemIsMovable, False)
 
-        # Add items to the flow submenu:
-        for key, stream in (BasicFlows | ComboFlows).items():
-
-            icon = util.qta_icon(stream.ICON, color=stream.COLOR)
-            text = stream.LABEL
-
-            action = self._flow_submenu.addAction(icon, text, lambda t=text: self.set_stream(t))
-            action.setIconVisibleInMenu(True)
-            action.setCheckable(True)
-
-            if self.attr["flow"].LABEL == action.text():
-                action.setChecked(True)
-                action.setIcon(util.qta_icon("mdi.check-bold", color="#efefef"))
-
         event.accept()
         self._menu.exec(event.screenPos())
 
@@ -242,8 +224,8 @@ class HandleItem(QtWidgets.QGraphicsObject):
         super().setCursor(QtCore.Qt.CursorShape.ArrowCursor)
 
         # Start animation:
-        self._anim.setStartValue(HANDLE_OPTS["frame"].width() / 2)
-        self._anim.setEndValue(HANDLE_OPTS["frame"].width() / 2 + 0.5)
+        self._anim.setStartValue(HandleOpts["frame"].width() / 2)
+        self._anim.setEndValue(HandleOpts["frame"].width() / 2 + 0.5)
         self._anim.start()
 
     # Reimplementation of QtWidgets.QGraphicsObject.hoverLeaveEvent():
@@ -253,8 +235,8 @@ class HandleItem(QtWidgets.QGraphicsObject):
         super().unsetCursor()
 
         # Start animation:
-        self._anim.setStartValue(HANDLE_OPTS["frame"].width() / 2 + 0.5)
-        self._anim.setEndValue(HANDLE_OPTS["frame"].width() / 2)
+        self._anim.setStartValue(HandleOpts["frame"].width() / 2 + 0.5)
+        self._anim.setEndValue(HandleOpts["frame"].width() / 2)
         self._anim.start()
 
     # Reimplementation of QtWidgets.QGraphicsObject.mousePressEvent():
@@ -268,7 +250,9 @@ class HandleItem(QtWidgets.QGraphicsObject):
             self.sig_handle_clicked.emit(self)
 
         else:
-            super().setFlag(QtWidgets.QGraphicsObject.GraphicsItemFlag.ItemIsMovable, True)
+            super().setFlag(
+                QtWidgets.QGraphicsObject.GraphicsItemFlag.ItemIsMovable, True
+            )
             super().mousePressEvent(event)
             event.accept()
 
@@ -291,11 +275,12 @@ class HandleItem(QtWidgets.QGraphicsObject):
     def on_set_stream(self) -> None:
 
         action = self.sender()
-        if isinstance(action, QtGui.QAction):
-            self.set_stream(action.text())
+        pass
 
     # When the user connects this handle to another:
-    def pair(self, connector: QtWidgets.QGraphicsObject, conjugate: "HandleItem") -> None:
+    def pair(
+        self, connector: QtWidgets.QGraphicsObject, conjugate: "HandleItem"
+    ) -> None:
         self.connected = True
         self.connector = connector
         self.conjugate = conjugate
@@ -314,43 +299,11 @@ class HandleItem(QtWidgets.QGraphicsObject):
     # Method to check if the handle can be connected to:
     def is_connectable(self) -> bool:
 
-        if self._accept_multiple:
+        if self.connected:
             return True
 
         else:
             return not len(self._connections)
-
-    # Method to set the handle's stream-type programmatically:
-    def set_stream(
-        self,
-        stream: str,  # Stream type to set. If not provided, it is inferred from the action.
-        mirror: bool = True,  # Whether to mirror the change on the conjugate handle.
-    ) -> None:
-        """
-        This method is called programmatically to set the stream type of the handle.
-        :param stream:
-        :param mirror:
-        :return:
-        """
-
-        # The variable `cls` is NOT a class instance, but the class itself:
-        cls: type[Stream] | None = next(
-            (flow for flow in (BasicFlows | ComboFlows).values() if flow.LABEL == stream),
-            None,
-        )
-
-        if cls is not None:
-            self.attr["flow"] = cls
-            self.scene().removeItem(self._icon)
-            self._icon = self._set_icon(cls)
-
-            # Mirror the change on the conjugate handle (if required):
-            if mirror and self.connector and self.conjugate:
-                self.connector.color = cls.COLOR
-                self.conjugate.set_stream(stream, mirror=False)
-
-        # Emit the stream-changed signal:
-        self.sig_stream_changed.emit(self.attr["flow"])
 
     # Declare the `radius` property using the `@Property` decorator to register with Qt's metaobject system:
     @QtCore.Property(float)

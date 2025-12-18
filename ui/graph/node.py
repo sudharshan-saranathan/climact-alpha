@@ -2,19 +2,20 @@
 # Module name: vertex
 # Description: A QtWidgets.QGraphicsObject-based vertex for the Climact application that represents a generic node in a schematic.
 
-# Imports:
+# Imports (standard)
 import copy
-import opts
 import types
 
+from qtawesome import icon as qta_icon
 from PySide6 import QtGui, QtCore, QtWidgets
 
-from ui.components import *
+from ui.components import Label
+from ui.graph.image import Image
 from ui.graph.anchor import AnchorItem
 from ui.graph.handle import HandleItem, HandleRole
 
 # Default vertex options:
-VERTEX_OPTS = {
+NodeOpts = {
     "corner-radius": 4,
     "frame": QtCore.QRectF(-36, -40, 72, 68),
     "board": {
@@ -95,7 +96,7 @@ class ResizeHandle(QtWidgets.QGraphicsObject):
 
 
 # Class Vertex:
-class VertexItem(QtWidgets.QGraphicsObject):
+class NodeItem(QtWidgets.QGraphicsObject):
 
     # QtCore.Signal(s):
     sig_item_updated = QtCore.Signal(QtWidgets.QGraphicsObject)
@@ -121,7 +122,7 @@ class VertexItem(QtWidgets.QGraphicsObject):
         self.setFlag(QtWidgets.QGraphicsObject.GraphicsItemFlag.ItemIsSelectable)
 
         # Handle database:
-        self.setProperty("style", VERTEX_OPTS["style"])
+        self.setProperty("style", NodeOpts["style"])
         self.database = types.SimpleNamespace(
             inp=dict(), out=dict(), par=dict(), eqn=list()
         )
@@ -132,8 +133,8 @@ class VertexItem(QtWidgets.QGraphicsObject):
             "id": id(self),
             "name": kwargs.get("name", "Process"),
             "icon": kwargs.get("icon", None),
-            "limit": VERTEX_OPTS["frame"].bottom(),
-            "frame": QtCore.QRectF(kwargs.get("frame", VERTEX_OPTS["frame"])),
+            "limit": NodeOpts["frame"].bottom(),
+            "frame": QtCore.QRectF(kwargs.get("frame", NodeOpts["frame"])),
         }
 
         # Add anchor(s):
@@ -159,7 +160,7 @@ class VertexItem(QtWidgets.QGraphicsObject):
         # Vertex-icon:
         self._image = Image(
             parent=self,
-            buffer=opts.CLIMACT_CONFIG["svg"] + "component.svg",
+            buffer=":/assets/icons/pack-svg/component.svg",
             size=QtCore.QSize(32, 32),
         )
         self._image.setOpacity(0.20)
@@ -176,20 +177,16 @@ class VertexItem(QtWidgets.QGraphicsObject):
         self._label.sig_text_changed.connect(self.on_text_changed)
 
         # Initialize configurator and menu:
-        self._config = VertexConfig(self, parent=None)
         self._menu = self._init_menu()
         self._register_with_bus()
 
     # Context-menu initializer:
     def _init_menu(self):
 
-        # Imports:
-        import util
-
         menu = QtWidgets.QMenu()
-        edit = menu.addAction(util.qta_icon("mdi.pencil"), "Configure", self.configure)
-        lock = menu.addAction(util.qta_icon("mdi.lock"), "Lock")
-        delete = menu.addAction(util.qta_icon("mdi.delete"), "Delete")
+        edit = menu.addAction(qta_icon("mdi.pencil"), "Configure", self.configure)
+        lock = menu.addAction(qta_icon("mdi.lock"), "Lock")
+        delete = menu.addAction(qta_icon("mdi.delete"), "Delete")
 
         edit.setIconVisibleInMenu(True)
         lock.setIconVisibleInMenu(True)
@@ -199,16 +196,6 @@ class VertexItem(QtWidgets.QGraphicsObject):
         lock.setChecked(False)
 
         return menu
-
-    # Register this class' signals with the event-bus:
-    def _register_with_bus(self):
-
-        # Import bus:
-        from schematic import Bus
-
-        bus = Bus.instance()
-        self.sig_item_updated.connect(bus.sig_item_updated)
-        self.sig_item_focused.connect(bus.sig_item_focused)
 
     # Method to set coordinate bounds on handles:
     def _set_limit(self, handle: HandleItem):
@@ -238,32 +225,31 @@ class VertexItem(QtWidgets.QGraphicsObject):
         painter.setBrush(brush)
         painter.drawRoundedRect(
             self.attr["frame"],
-            VERTEX_OPTS["corner-radius"],
-            VERTEX_OPTS["corner-radius"],
+            NodeOpts["corner-radius"],
+            NodeOpts["corner-radius"],
         )
 
         # Draw a white board
-        painter.setBrush(VERTEX_OPTS["board"]["brush"])
+        painter.setBrush(NodeOpts["board"]["brush"])
         painter.drawRoundedRect(
             self.attr["frame"].adjusted(0, 16, -0, -0),
-            VERTEX_OPTS["board"]["corner-radius"],
-            VERTEX_OPTS["board"]["corner-radius"],
+            NodeOpts["board"]["corner-radius"],
+            NodeOpts["board"]["corner-radius"],
         )
 
     # Reimplementation of QtWidgets.QGraphicsObject.itemChange():
     def itemChange(self, change, value, /):
 
-        # Import:
-        from schematic import Canvas
-
         # Flag alias:
         scene_flag = QtWidgets.QGraphicsObject.GraphicsItemChange.ItemSceneHasChanged
 
         # Connect to the canvas's begin_transient() method when added to a scene:
-        if change == scene_flag and isinstance(value, Canvas):
+        """ 
+        if change == scene_flag and isinstance(value, GraphicsScene):
             self.sig_item_updated.connect(value.sig_canvas_updated)
             self.sig_handle_created.connect(value.sig_canvas_updated)
             self.sig_handle_clicked.connect(value.begin_transient)
+        """
 
         # Invoke the base-class implementation:
         return super().itemChange(change, value)
@@ -436,10 +422,10 @@ class VertexItem(QtWidgets.QGraphicsObject):
         self.scene().removeItem(self)
 
     # Clone this vertex:
-    def clone(self) -> "VertexItem":
+    def clone(self) -> "NodeItem":
 
         # Create a new vertex with the same properties:
-        vertex = VertexItem(
+        vertex = NodeItem(
             cpos=self.scenePos() + QtCore.QPointF(25, 25),
             icon=self.property("icon"),
             limit=self.attr["limit"],

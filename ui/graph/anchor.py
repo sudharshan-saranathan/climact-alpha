@@ -2,12 +2,16 @@
 # Module name: anchor
 # Description: Transparent rails on which input and output handles to a vertex can be anchored.
 
-# PySide6:
+# Import (standard)
+from __future__ import annotations
+
+
+# Import (third party)
 from PySide6.QtCore import Qt, QRectF, QPointF, Signal, Property
 from PySide6.QtGui import QPen, QBrush, QColor
 from PySide6.QtWidgets import QGraphicsObject, QGraphicsEllipseItem
 
-from schematic.handle import HANDLE_OPTS
+from ui.graph.handle import HandleOpts
 
 # Default config:
 AnchorOpts = {
@@ -46,9 +50,9 @@ class AnchorItem(QGraphicsObject):
 
         # Initialize handle-hint:
         self._hint = QGraphicsEllipseItem(self)
-        self._hint.setRect(HANDLE_OPTS["frame"])
+        self._hint.setRect(HandleOpts["frame"])
         self._hint.setPen(QPen(QColor(0x000000), 0.50))
-        self._hint.setBrush(QBrush(HANDLE_OPTS["color"]))
+        self._hint.setBrush(QBrush(HandleOpts["color"]))
         self._hint.setVisible(False)
 
         # Hook onto callbacks:

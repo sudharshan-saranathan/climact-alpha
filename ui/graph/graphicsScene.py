@@ -38,6 +38,13 @@ class GraphicsScene(QtWidgets.QGraphicsScene):
         subm = menu.addMenu("Add")
         menu.addSeparator()
 
+        # Sub-menu actions
+        subm.addAction(
+            qta_icon("ph.cube", color="cyan"),
+            "Node",
+            lambda: GraphicsScene.create_item("NodeItem"),
+        )
+
         menu.addAction(qta_icon("mdi.content-copy", color="#efefef"), "Copy")
         menu.addAction(qta_icon("mdi.content-paste", color="blue"), "Paste")
         return menu
@@ -49,8 +56,13 @@ class GraphicsScene(QtWidgets.QGraphicsScene):
             self._mpos = event.scenePos()
             self._menu.exec(event.screenPos())
 
-    # Public methods
-    def create_item(self, item_class: str):
+    # Method to create a new item
+    @staticmethod
+    def create_item(item_class: str):
 
-        # Import globals
-        _class = globals()[item_class]
+        # Import graph items
+        from ui.graph.node import NodeItem
+        from ui.graph.handle import HandleItem
+
+        _type = locals().get(item_class, None)
+        _item = _type(self._mpos)
