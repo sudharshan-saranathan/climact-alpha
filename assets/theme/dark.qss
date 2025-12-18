@@ -479,7 +479,6 @@ QTableWidget::item {
     background                  : transparent;
     color                       : white;
     border                      : none;
-    outline                     : 0px;
     padding                     : 0px 0px 0px 4px;
 }
 

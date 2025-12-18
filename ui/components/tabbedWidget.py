@@ -12,7 +12,7 @@ from PySide6 import QtGui, QtCore, QtWidgets
 
 
 # Imports (local)
-from core.events import EventBus
+from events.widgetEvents import EventBus
 from ui.components.graphicsView import GraphicsView, GraphicsScene
 
 

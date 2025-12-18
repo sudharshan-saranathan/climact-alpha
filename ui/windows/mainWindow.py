@@ -12,7 +12,7 @@ from PySide6 import QtGui, QtCore, QtWidgets
 from qtawesome import icon as qta_icon
 
 # Imports (local)
-from core.events import EventBus
+from events.widgetEvents import EventBus
 from ui.components.graphicsView import GraphicsView
 from ui.components.tabbedWidget import TabbedWidget
 from ui.components.toolbar import ToolBar
